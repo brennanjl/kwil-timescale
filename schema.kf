@@ -1,0 +1,23 @@
+database timescale;
+
+use timescaledb {
+    time_series: 'unix_timestamp'
+} as timescale;
+
+table time_series {
+    // can be made more effective with an int primary key,
+    // but the example is simpler without.
+    unix_timestamp int primary key,
+    value text
+}
+
+action insert_value($timestamp, $val) public {
+    insert into time_series (unix_timestamp, value)
+    values ($timestamp, $val);
+}
+
+// using an action so that we can have full access to all of Postgres's querying (even 
+// non-deterministic queries) , and not be restricted by Kwil's limited syntax.
+action query($stmt) public view {
+    timescale.query($stmt);
+}
