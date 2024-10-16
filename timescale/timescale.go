@@ -137,7 +137,7 @@ type hypertableConfig struct {
 // ensureApplied ensures that the hypertable is applied.
 func (h *hypertableConfig) ensureApplied(ctx context.Context, db sql.Executor, pgSchema string) error {
 	str := strings.Builder{}
-	str.WriteString("select create_hypertable('")
+	str.WriteString("select 1 from (select create_hypertable('")
 	str.WriteString(pgSchema)
 	str.WriteString(".")
 	str.WriteString(h.tableName)
@@ -148,7 +148,7 @@ func (h *hypertableConfig) ensureApplied(ctx context.Context, db sql.Executor, p
 		str.WriteString(dim)
 		str.WriteString("'")
 	}
-	str.WriteString(");")
+	str.WriteString("));")
 
 	stmt := str.String()
 
