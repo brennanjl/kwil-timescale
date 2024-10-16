@@ -65,7 +65,7 @@ type timescaleInstance struct {
 }
 
 func (t *timescaleInstance) Call(scoper *precompiles.ProcedureContext, app *common.App, method string, inputs []any) ([]any, error) {
-	if err := t.ensureReady(scoper.Ctx); err != nil {
+	if err := t.ensureReady(scoper.TxCtx.Ctx); err != nil {
 		return nil, err
 	}
 
@@ -76,10 +76,10 @@ func (t *timescaleInstance) Call(scoper *precompiles.ProcedureContext, app *comm
 	}
 
 	// set the postgres search path
-	if err := t.ensurePGSchema(scoper.Ctx, app.DB); err != nil {
+	if err := t.ensurePGSchema(scoper.TxCtx.Ctx, app.DB); err != nil {
 		return nil, err
 	}
-	defer t.unEnsurePGSchema(scoper.Ctx, app.DB)
+	defer t.unEnsurePGSchema(scoper.TxCtx.Ctx, app.DB)
 
 	switch strings.ToLower(method) {
 	default:
@@ -96,7 +96,7 @@ func (t *timescaleInstance) Call(scoper *precompiles.ProcedureContext, app *comm
 
 		// we may want to validate inputs here, but for now we'll just pass them through
 		var err error
-		scoper.Result, err = app.DB.Execute(scoper.Ctx, query, inputs[1:]...)
+		scoper.Result, err = app.DB.Execute(scoper.TxCtx.Ctx, query, inputs[1:]...)
 		if err != nil {
 			return nil, err
 		}

@@ -13,7 +13,7 @@ import (
 // dedicated to only creating hypertables, but it is not released yet.
 
 // makeHyperTable is an endblock hook that creates hypertables as-needed.
-func makeHypertable(ctx context.Context, app *common.App) error {
+func makeHypertable(ctx context.Context, app *common.App, block *common.BlockContext) error {
 	// get all the hypertables that need to be created
 	slices := hypertables.getAndClear()
 
